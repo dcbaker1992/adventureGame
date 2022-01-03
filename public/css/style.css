@@ -1,0 +1,15 @@
+body{
+    background-color:rgb(135, 163, 222) ;
+}
+
+h1,h4, h3{
+    color: crimson;
+}
+
+a{
+    color: rgb(94, 9, 9);
+}
+
+button{
+    background-color:rgb(98, 228, 233);
+}
