@@ -1,15 +1,53 @@
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 3400;
+app.use(express.urlencoded({extended: true}));
 app.use(express.static(__dirname + '/public'));
-
-
-
-
+app.use(express.json());
+var session = require('express-session');
 
 app.set("view engine", "ejs");
+app.use(session({
+    secret: 'random string',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
+  }))
+
 
 app.get("/", (req, res) => {
+    let user = "";
+    let punctuation = '';
+    if(req.session && req.session.username){
+        user = req.session.username;
+        punctuation = ',';
+    }
+    res.render("index", {user: user, punctuation: punctuation});
+})
+
+app.post("/signup", (req, res) => {
+    const valid_user = [
+        {"name": 'dillon', "password": '123'}
+    ];
+    const user = req.body.username;
+    const password = req.body.password;
+
+    const found_user = valid_user.find(usr =>{
+        return usr.name == user && usr.password == password
+    });
+
+    if(found_user){
+        req.session.username = user;
+        res.render('start', {user: user});
+    } else {
+        req.session.destroy(()=>{
+            console.log("Invalid Log In Try Again");
+        })
+        res.redirect('/')
+    }
+})
+
+app.get("/start", (req, res) => {
     res.render('start')
 })
 app.get("/fantasy", (req, res) => {
